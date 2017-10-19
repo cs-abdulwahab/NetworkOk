@@ -3,9 +3,15 @@ package com.example.abdul_wahab.networkok;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.abdul_wahab.networkok.models.Food;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,10 +27,62 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MTAG";
 
+
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    void test(CustomEvent customEvent) {
+
+        Log.d(TAG, "test: custom event");
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        EventBus.getDefault().register(this);
+
+        Button btnFetch = (Button) findViewById(R.id.btnFetch);
+        btnFetch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                OkHttpClient client = new OkHttpClient();
+
+                Request req = new Request.Builder()
+                        .get()
+                        .url("http://uol.mocklab.io/food")
+                        .build();
+
+                client.newCall(req).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+
+                        Log.d(TAG, "onResponse() called with: call = [" + call + "], response = [" + response.body().string() + "]");
+
+
+
+
+
+                    }
+                });
+
+
+            }
+        });
 
 
         final OkHttpClient client = new OkHttpClient();
@@ -35,8 +93,37 @@ public class MainActivity extends AppCompatActivity {
                 .addHeader("cache-control", "no-cache")
                 .build();
 
-        // Response response = client.newCall(request).execute();
 
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+                Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                Log.d(TAG, "onResponse() called with: call = [" + call + "], response = [" + response + "]");
+
+
+                Gson gson = new Gson();
+                Food[] food = gson.fromJson(response.body().string(), Food[].class);
+
+                //ArrayList<Food>    Arrays.asList(food);
+
+                ArrayList<Food> foodList = new ArrayList<Food>(Arrays.asList(food));
+
+                EventBus.getDefault().post(new CustomEvent());
+
+
+                String s = "";
+            }
+        });
+
+
+
+/*
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -57,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+*/
 
         Log.d(TAG, "end of oncreate method: ");
 
