@@ -7,5 +7,12 @@ package com.example.abdul_wahab.networkok;
 class CustomEvent {
 
 
+    String json;
 
+    public CustomEvent() {
+    }
+
+    public CustomEvent(String json) {
+        this.json = json;
+    }
 }

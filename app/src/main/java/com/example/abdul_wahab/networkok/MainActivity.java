@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.abdul_wahab.networkok.models.Food;
 import com.google.gson.Gson;
@@ -28,13 +29,28 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MTAG";
 
 
-    @Subscribe(threadMode = ThreadMode.POSTING)
+//
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    void fun(CustomEvent customEvent) {
+//        Log.d(TAG, "fun: ");
+//    }
+
+
+    // ThreadMode MAIN (UI Thread )
+    @Subscribe(threadMode = ThreadMode.MAIN)
     void test(CustomEvent customEvent) {
 
-        Log.d(TAG, "test: custom event");
+        Log.d(TAG, "test: custom event = " + customEvent.json);
 
+        TextView txtMessage = (TextView) findViewById(R.id.txtMessage);
+        Log.d(TAG, "test: " + txtMessage.getText().toString());
+
+        txtMessage.setText(customEvent.json);
+
+        Log.d(TAG, "test: update " + txtMessage.getText().toString());
 
     }
+
 
     @Override
     protected void onDestroy() {
@@ -56,26 +72,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 OkHttpClient client = new OkHttpClient();
-
                 Request req = new Request.Builder()
                         .get()
                         .url("http://uol.mocklab.io/food")
                         .build();
-
                 client.newCall(req).enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         Log.d(TAG, "onFailure() called with: call = [" + call + "], e = [" + e + "]");
                     }
-
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
 
-                        Log.d(TAG, "onResponse() called with: call = [" + call + "], response = [" + response.body().string() + "]");
+                        //to update the txtMessage
+                        // Cannot Update like this
+                        /*
+                            TextView txtMessage = (TextView) findViewById(R.id.txtMessage);
+                            txtMessage.setText(response.body().string());
+                        */
 
-
-
-
+                        EventBus.getDefault().post(new CustomEvent(response.body().string()));
 
                     }
                 });
@@ -114,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
                 ArrayList<Food> foodList = new ArrayList<Food>(Arrays.asList(food));
 
-                EventBus.getDefault().post(new CustomEvent());
+                //           EventBus.getDefault().post(new CustomEvent());
 
 
                 String s = "";
