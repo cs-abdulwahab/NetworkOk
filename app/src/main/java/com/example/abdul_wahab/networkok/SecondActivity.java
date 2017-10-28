@@ -23,6 +23,9 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
+        // You will convert POJO Object to JSON via Gson
+        // and then Put the JSON in the Request Body
+
         String JSON = "{\n" +
                 "            \"id\": 1,\n" +
                 "                \"name\": \"Survey1\",\n" +

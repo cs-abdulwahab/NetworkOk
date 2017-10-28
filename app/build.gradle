@@ -1,8 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+        }
+    }
     compileSdkVersion 24
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.example.abdul_wahab.networkok"
         minSdkVersion 19
@@ -25,10 +29,34 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    //Dagger Dependencies
+    /*compile 'com.google.dagger:dagger-android:2.11'
+    //compile 'com.google.dagger:dagger-android-support:2.11' // if you use the support libraries
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.11'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+*/
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
     compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.github.myinnos:AwesomeImagePicker:1.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
     testCompile 'junit:junit:4.12'
 }
+
+
+
+
+
+
+
+
+
+
+
+
+apply plugin: 'com.google.gms.google-services'
